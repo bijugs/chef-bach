@@ -3,8 +3,16 @@
 #######################################
 
 # Attribute to indidate whether an existing Hadoop Zookeeper
+# can be used. If not Kafka Zookeeper quorum need to be created
+default[:use_hadoop_zookeeper_quorum] = false
+default[:bcpc][:kafka][:skip_restart_coordination] = true
+default[:bcpc][:kafka][:restart_failed] = false
+default[:bcpc][:kafka][:restart_failed_time] = ""
+
+# Attribute to indidate whether an existing Hadoop Zookeeper
 # can be used. If not Kafka Zookeeper quorum need to be created 
 default[:use_hadoop_zookeeper_quorum] = false
+
 #
 # Overwriting community kafka cookbook attributes 
 #
