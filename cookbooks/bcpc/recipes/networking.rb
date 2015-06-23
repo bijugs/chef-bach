@@ -223,3 +223,33 @@ bash "disable-noninteractive-pam-logging" do
     code "sed --in-place 's/^\\(session\\s*required\\s*pam_unix.so\\)/#\\1/' /etc/pam.d/common-session-noninteractive"
     only_if "grep -e '^session\\s*required\\s*pam_unix.so' /etc/pam.d/common-session-noninteractive"
 end
+
+kernel_module "ip_conntrack" do
+  action :install
+  search_name "nf_conntrack_ipv4"
+end
+
+include_recipe 'sysctl::default'
+sysctl_param 'net.ipv4.ip_local_port_range' do
+  value "32768 65535"
+end
+
+sysctl_param 'net.ipv4.tcp_tw_recycle' do
+  value 1
+end
+
+sysctl_param 'net.ipv4.tcp_tw_reuse' do
+  value 1
+end
+
+sysctl_param 'net.ipv4.netfilter.ip_conntrack_tcp_timeout_fin_wait' do
+  value 10
+end
+
+sysctl_param 'net.ipv4.netfilter.ip_conntrack_tcp_timeout_time_wait' do
+  value 5
+end
+
+sysctl_param 'net.ipv4.netfilter.ip_conntrack_tcp_timeout_established' do
+  value 60
+end
