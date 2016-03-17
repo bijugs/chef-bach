@@ -5,16 +5,16 @@ package "hbase" do
   action :upgrade
 end
 
-bash "/tmp/oozie.war" do
+bash "#{Chef::Config[:file_cache_path]}/oozie.war" do
   user "root"
   group "root"
   code <<-EOH
-    cp /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war /tmp/oozie.war
+    cp /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war "#{Chef::Config[:file_cache_path]}"/oozie.war
   EOH
   action :run
 end
 
-directory '/tmp/oozie-hbase-prep' do
+directory "#{Chef::Config[:file_cache_path]}/oozie-hbase-prep" do
   owner 'root'
   group 'root'
   mode '0755'
@@ -24,7 +24,7 @@ end
 bash 'extract-oozie-war' do
   user "root"
   group "root"
-  cwd "/tmp/oozie-hbase-prep"
+  cwd "#{Chef::Config[:file_cache_path]}/oozie-hbase-prep"
   code <<-EOH
     jar -xf ../oozie.war
   EOH
@@ -35,17 +35,17 @@ bash 'copy-hbase-jars' do
   user "root"
   group "root"
   code <<-EOH
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-common-0.98.4.2.2.0.0-2041-hadoop2.jar /tmp/oozie-hbase-prep/WEB-INF/lib/hbase-common-0.98.4.2.2.0.0-2041-hadoop2.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-client-0.98.4.2.2.0.0-2041-hadoop2.jar /tmp/oozie-hbase-prep/WEB-INF/lib/hbase-client-0.98.4.2.2.0.0-2041-hadoop2.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-server-0.98.4.2.2.0.0-2041-hadoop2.jar /tmp/oozie-hbase-prep/WEB-INF/lib/hbase-server-0.98.4.2.2.0.0-2041-hadoop2.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-protocol-0.98.4.2.2.0.0-2041-hadoop2.jar /tmp/oozie-hbase-prep/WEB-INF/lib/hbase-protocol-0.98.4.2.2.0.0-2041-hadoop2.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-hadoop2-compat-0.98.4.2.2.0.0-2041-hadoop2.jar /tmp/oozie-hbase-prep/WEB-INF/lib/hbase-hadoop2-compat-0.98.4.2.2.0.0-2041-hadoop2.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/htrace-core-2.04.jar /tmp/oozie-hbase-prep/WEB-INF/lib/htrace-core-2.04.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/htrace-core-3.0.4.jar /tmp/oozie-hbase-prep/WEB-INF/lib/htrace-core-3.0.4.jar
-    cp /usr/hdp/2.2.0.0-2041/hbase/lib/netty-3.6.6.Final.jar /tmp/oozie-hbase-prep/WEB-INF/lib/netty-3.6.6.Final.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-common-0.98.4.2.2.0.0-2041-hadoop2.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/hbase-common-0.98.4.2.2.0.0-2041-hadoop2.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-client-0.98.4.2.2.0.0-2041-hadoop2.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/hbase-client-0.98.4.2.2.0.0-2041-hadoop2.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-server-0.98.4.2.2.0.0-2041-hadoop2.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/hbase-server-0.98.4.2.2.0.0-2041-hadoop2.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-protocol-0.98.4.2.2.0.0-2041-hadoop2.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/hbase-protocol-0.98.4.2.2.0.0-2041-hadoop2.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/hbase-hadoop2-compat-0.98.4.2.2.0.0-2041-hadoop2.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/hbase-hadoop2-compat-0.98.4.2.2.0.0-2041-hadoop2.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/htrace-core-2.04.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/htrace-core-2.04.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/htrace-core-3.0.4.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/htrace-core-3.0.4.jar
+    cp /usr/hdp/2.2.0.0-2041/hbase/lib/netty-3.6.6.Final.jar "#{Chef::Config[:file_cache_path]}"/oozie-hbase-prep/WEB-INF/lib/netty-3.6.6.Final.jar
   EOH
   action :run
-  not_if do ::File.exists?('/tmp/oozie-hbase-prep/WEB-INF/lib/htrace-core-2.04.jar') end
+  not_if do ::File.exists?("#{Chef::Config[:file_cache_path]}/oozie-hbase-prep/WEB-INF/lib/htrace-core-2.04.jar") end
   notifies :run,"bash[create-new-oozie-war]", :immediately
 end
 
@@ -53,7 +53,7 @@ bash 'create-new-oozie-war' do
   user "root"
   group "root"
   code <<-EOH
-    cd /tmp/oozie-hbase-prep
+    cd "#{Chef::Config[:file_cache_path]}/oozie-hbase-prep"
     jar -cMf ../oozie.war *
   EOH
   action :nothing
@@ -73,7 +73,7 @@ bash 'copy-hbase-jars' do
   code <<-EOH
     cp /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war.orig
     rm -fr /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war
-    cp /tmp/oozie.war /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war
+    cp "#{Chef::Config[:file_cache_path]}"/oozie.war /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie.war
     rm -rf /usr/hdp/2.2.0.0-2041/oozie/oozie-server/webapps/oozie
   EOH
   action :nothing
@@ -86,11 +86,11 @@ service "start-oozie" do
   supports :status => true, :restart => true, :reload => false
 end
 
-directory '/tmp/oozie-hbase-prep' do
+directory "#{Chef::Config[:file_cache_path]}/oozie-hbase-prep" do
   action :delete
   recursive true
 end
 
-file '/tmp/oozie.war' do
+file "#{Chef::Config[:file_cache_path]}/oozie.war" do
   action :delete
 end
